@@ -22,7 +22,7 @@ const InifiniteScroll: React.FunctionComponent<InifiniteScrollProps> = ({
     <div
       onScroll={handleScroll}
       data-testid="scroll-container"
-      style={{ maxHeight: "500px", overflow: "hidden", overflowY: "auto" }}
+      style={{ overflow: "hidden", overflowY: "auto" }}
     >
       {children}
       {isLoading && <p>Loading...</p>}

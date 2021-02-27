@@ -12,25 +12,23 @@ describe("SearchForm component", () => {
 
   test("renders correctly", () => {
     render(<SearchForm {...props} />);
-    const pageTitle = screen.getByText("Search Form");
-    expect(pageTitle).toBeInTheDocument();
+    const input = screen.getByPlaceholderText("Search");
+    const button = screen.getByRole("button");
+    expect(input).toBeInTheDocument();
+    expect(button).toBeInTheDocument();
   });
 
   test("it does not call onSubmit with an empty search term", () => {
-    const { getByText } = render(
-      <SearchForm {...props} />
-    );
-    const button = getByText("Search");
+    render(<SearchForm {...props} />);
+    const button = screen.getByRole("button");
     fireEvent.click(button);
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
   test("it calls onSubmit on button click with the correct search term", () => {
-    const { getByPlaceholderText, getByText } = render(
-      <SearchForm {...props} />
-    );
-    const input = getByPlaceholderText("Search");
-    const button = getByText("Search");
+    render(<SearchForm {...props} />);
+    const input = screen.getByPlaceholderText("Search");
+    const button = screen.getByRole("button");
     act(() => {
       fireEvent.change(input, { target: { value: "Beyonce" } });
     });
