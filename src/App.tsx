@@ -1,21 +1,22 @@
-import React, { useState } from "react";
+import React from "react";
 import "./App.css";
 import Results from "./components/Results/Results";
 import SearchForm from "./components/SearchForm/SearchForm";
+import { useAppSelector, useAppDispatch } from './hooks';
+import { fetchResults } from './appSlice'
 
 const App = () => {
-  const [data, setData] = useState([]);
+  const data = useAppSelector(state => state.app.searchResults);
+  const dispatch = useAppDispatch();
 
-  const testApi = (searchTerm: string) => {
-    fetch(`http://localhost:3000/search?term=${searchTerm}`)
-      .then(response => response.json())
-      .then(data => setData(data));
+  const getSearchResults = (searchTerm: string) => {
+    dispatch(fetchResults(searchTerm));
   };
 
   return (
     <div className="App">
       <h1>ITunes Search</h1>
-      <SearchForm onSubmit={testApi} />
+      <SearchForm onSubmit={getSearchResults} />
       <Results data={data} />
     </div>
   );
