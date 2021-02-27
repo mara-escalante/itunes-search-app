@@ -1,5 +1,5 @@
 export interface Result {
-  trackid: string;
+  trackId: string;
   artistName: string;
   trackName: string;
 }

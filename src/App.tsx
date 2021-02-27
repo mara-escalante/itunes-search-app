@@ -1,15 +1,16 @@
 import React from "react";
 import "./App.css";
+import { useAppSelector, useAppDispatch } from "./hooks";
+import { clearState, fetchResults } from "./appSlice";
 import Results from "./components/Results/Results";
 import SearchForm from "./components/SearchForm/SearchForm";
-import { useAppSelector, useAppDispatch } from './hooks';
-import { fetchResults } from './appSlice'
 
 const App = () => {
-  const data = useAppSelector(state => state.app.searchResults);
   const dispatch = useAppDispatch();
+  const data = useAppSelector(state => state.app.searchResults);
 
   const getSearchResults = (searchTerm: string) => {
+    dispatch(clearState());
     dispatch(fetchResults(searchTerm));
   };
 

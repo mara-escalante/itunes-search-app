@@ -15,8 +15,8 @@ app.get("/", function (req, res) {
 });
 
 app.get("/search", async (req, res) => {
-  const term = req.query.term;
-  const response = await axios.get(`https://itunes.apple.com/search?term=${term}&limit=10&media=music`);
+  const {term, offset } = req.query;
+  const response = await axios.get(`https://itunes.apple.com/search?term=${term}&limit=10&media=music&offset=${offset}`);
   return res.send(JSON.stringify(response.data.results));
 });
 
