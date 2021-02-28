@@ -14,10 +14,9 @@ const StyledFormGroup = styled(FormGroup)`
 `;
 interface SearchFormProps {
   onSubmit: (request: FetchResultsRequest) => void;
-  hasResults: boolean;
 }
 
-const SearchForm: React.FunctionComponent<SearchFormProps> = ({ onSubmit, hasResults }) => {
+const SearchForm: React.FC<SearchFormProps> = ({ onSubmit }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState({
     artist: true,
@@ -39,7 +38,7 @@ const SearchForm: React.FunctionComponent<SearchFormProps> = ({ onSubmit, hasRes
   const onCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newFilters = { ...filters, [e.target.name]: e.target.checked };
     setFilters(newFilters);
-    if (searchTerm && hasResults) {
+    if (searchTerm) {
       onSubmit({ searchTerm, filters: newFilters });
     }
   };

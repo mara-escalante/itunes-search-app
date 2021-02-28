@@ -34,6 +34,7 @@ describe("Results component", () => {
     data,
     searchTerm: "search term",
     status: "idle",
+    error: '',
     loadResults
   };
 

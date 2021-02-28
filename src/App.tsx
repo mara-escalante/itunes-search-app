@@ -4,8 +4,8 @@ import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
 import Results from "./components/Results/Results";
 import SearchForm from "./components/SearchForm/SearchForm";
-import { useAppSelector, useAppDispatch } from "./hooks";
-import { clearState, fetchResults } from "./appSlice";
+import { useAppSelector, useAppDispatch } from "./redux/redux-hooks";
+import { clearState, getResults } from "./redux/appSlice";
 import { FetchResultsRequest } from "./types";
 
 const StyledContainer = styled(Container)`
@@ -16,14 +16,14 @@ const StyledContainer = styled(Container)`
 const App = () => {
   const dispatch = useAppDispatch();
   const state = useAppSelector(state => state.app);
-  const { searchResults, searchTerm, filters, status } = state || {};
+  const { searchResults, searchTerm, filters, status, error } = state || {};
 
   const getSearchResults = (request?: FetchResultsRequest) => {
     if (request) {
       dispatch(clearState());
-      dispatch(fetchResults(request));
+      dispatch(getResults(request));
     } else {
-      dispatch(fetchResults({ searchTerm, filters }));
+      dispatch(getResults({ searchTerm, filters }));
     }
   };
 
@@ -34,12 +34,12 @@ const App = () => {
       </Typography>
       <SearchForm
         onSubmit={getSearchResults}
-        hasResults={searchResults?.length > 0}
       />
       <Results
         data={searchResults}
         searchTerm={searchTerm}
         status={status}
+        error={error}
         loadResults={getSearchResults}
       />
     </StyledContainer>

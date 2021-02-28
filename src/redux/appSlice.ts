@@ -1,43 +1,25 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { fetchSearchResults } from "../api/searchService";
 import { AppDispatch, RootState } from "./store";
-import { FetchResultsRequest, Filters, Result } from "./types";
+import { FetchResultsRequest, Filters, Result } from "../types";
 
-export const fetchResults = createAsyncThunk<
+type Someting = {
+  dispatch: AppDispatch;
+  state: RootState;
+};
+
+export const getResults = createAsyncThunk<
   Result[],
   FetchResultsRequest,
-  {
-    dispatch: AppDispatch;
-    state: RootState;
-  }
->("results/fetchResults", async (request, thunkApi) => {
+  Someting
+>("results/getResults", async (request, thunkApi) => {
   const {
     app: { offset }
   } = thunkApi.getState();
 
-  const { searchTerm, filters } = request;
-  const { artist, collection, track } = filters;
-  
-  let entity;
-  if (!artist && !collection && !track) {
-    entity = `musicArtist,album,song`;
-  } else {
-    entity = `${artist ? "musicArtist" : ""},${collection ? "album" : ""},${
-      track ? "song" : ""
-    }`;
-  }
-
-  const response = fetch(
-    `http://localhost:3000/search?term=${searchTerm}&entity=${entity}&offset=${offset}`
-  )
-    .then(response => {
-      return response.json();
-    })
-    .catch(e => {
-      return e.error;
-    });
-
-  return response;
+  return fetchSearchResults(request, offset);
 });
+
 interface AppState {
   status: string;
   searchTerm: string;
@@ -63,18 +45,19 @@ export const appSlice = createSlice({
     clearState: () => initialState
   },
   extraReducers: builder => {
-    builder.addCase(fetchResults.pending, (state, action) => {
+    builder.addCase(getResults.pending, (state, action) => {
       state.status = "loading";
       state.searchTerm = action.meta.arg.searchTerm;
       state.filters = action.meta.arg.filters;
     });
-    builder.addCase(fetchResults.fulfilled, (state, action) => {
+    builder.addCase(getResults.fulfilled, (state, action) => {
       state.status = "succeeded";
       state.offset += 10;
       state.searchResults = state.searchResults.concat(action.payload);
     });
-    builder.addCase(fetchResults.rejected, (state, action) => {
+    builder.addCase(getResults.rejected, (state, action) => {
       state.status = "failed";
+      state.error = action.error.message || 'Something went wrong';
     });
   }
 });

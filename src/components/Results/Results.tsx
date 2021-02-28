@@ -1,30 +1,24 @@
 import React from "react";
-import styled from "styled-components";
 import List from "@material-ui/core/List";
-import CircularProgress from "@material-ui/core/CircularProgress";
 import InfiniteScroll from "../InfiniteScroll/InfiniteScroll";
+import NoResultsMessage from "./NoResultsMessage";
 import ResultItem from "./ResultItem";
 import { Result } from "../../types";
 import { getMappedResult } from "./utils";
-
-const MessageContainer = styled("div")`
-  min-height: 400px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
 
 interface ResultsProps {
   data: Result[];
   searchTerm: string;
   status: string;
+  error: string;
   loadResults: () => void;
 }
 
-const Results: React.FunctionComponent<ResultsProps> = ({
+const Results: React.FC<ResultsProps> = ({
   data,
   searchTerm,
   status,
+  error,
   loadResults
 }) => {
   const isLoading = status === "loading";
@@ -45,15 +39,11 @@ const Results: React.FunctionComponent<ResultsProps> = ({
           </List>
         </InfiniteScroll>
       ) : (
-        <MessageContainer>
-          {isLoading ? (
-            <CircularProgress />
-          ) : searchTerm ? (
-            <p>No results for the term "{searchTerm}"</p>
-          ) : (
-            <p>Type a search term to see some results</p>
-          )}
-        </MessageContainer>
+        <NoResultsMessage
+          isLoading={isLoading}
+          error={error}
+          searchTerm={searchTerm}
+        />
       )}
     </>
   );

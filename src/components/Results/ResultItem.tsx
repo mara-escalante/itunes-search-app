@@ -32,7 +32,7 @@ interface ResultItemProps {
   icon?: React.ReactNode;
 }
 
-const ResultItem: React.FunctionComponent<ResultItemProps> = ({
+const ResultItem: React.FC<ResultItemProps> = ({
   icon,
   imageTitle,
   imageUrl,

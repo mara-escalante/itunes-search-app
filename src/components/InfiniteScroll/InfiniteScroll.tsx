@@ -7,7 +7,7 @@ interface InfiniteScrollProps {
   height?: number;
 }
 
-const InfiniteScroll: React.FunctionComponent<InfiniteScrollProps> = ({
+const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
   children,
   loadMore,
   isLoading,

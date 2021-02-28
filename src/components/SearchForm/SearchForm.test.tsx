@@ -13,7 +13,6 @@ describe("SearchForm component", () => {
 
   const props = {
     onSubmit,
-    hasResults: false
   };
 
   test("renders correctly", () => {
@@ -67,7 +66,7 @@ describe("SearchForm component", () => {
     });
   });
 
-  test("it calls onSubmit on checkbox change if there are results", () => {
+  test("it calls onSubmit on checkbox change", () => {
     const newProps = {
       ...props,
       hasResults: true
