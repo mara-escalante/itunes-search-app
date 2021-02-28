@@ -16,14 +16,25 @@ export const fetchResults = createAsyncThunk<
 
   const { searchTerm, filters } = request;
   const { artist, collection, track } = filters;
-  const entity = `${artist ? 'musicArtist': ''},${collection ? 'album': ''},${track ?'song':''}`
+  
+  let entity;
+  if (!artist && !collection && !track) {
+    entity = `musicArtist,album,song`;
+  } else {
+    entity = `${artist ? "musicArtist" : ""},${collection ? "album" : ""},${
+      track ? "song" : ""
+    }`;
+  }
 
   const response = fetch(
     `http://localhost:3000/search?term=${searchTerm}&entity=${entity}&offset=${offset}`
   )
     .then(response => {
-        return response.json()
+      return response.json();
     })
+    .catch(e => {
+      return e.error;
+    });
 
   return response;
 });

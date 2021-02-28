@@ -8,7 +8,7 @@ export interface Track extends CommonResult {
   trackId: string;
   artistName: string;
   trackName: string;
-  artworkUrl60: string;
+  artworkUrl100: string;
 }
 
 export interface Artist extends CommonResult {
@@ -21,7 +21,7 @@ export interface Collection extends CommonResult {
   collectionId: string;
   collectionName: string;
   artistName: string;
-  artworkUrl60: string;
+  artworkUrl100: string;
 }
 
 export interface FetchResultsRequest {

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import Button from "@material-ui/core/Button";
+import IconButton from "@material-ui/core/IconButton";
 import SearchIcon from "@material-ui/icons/Search";
 import TextField from "@material-ui/core/TextField";
 import Checkbox from "@material-ui/core/Checkbox";
@@ -10,13 +10,14 @@ import { FetchResultsRequest } from "../../types";
 
 const StyledFormGroup = styled(FormGroup)`
   justify-content: center;
+  align-items: center;
 `;
-
 interface SearchFormProps {
   onSubmit: (request: FetchResultsRequest) => void;
+  hasResults: boolean;
 }
 
-const SearchForm: React.FunctionComponent<SearchFormProps> = ({ onSubmit }) => {
+const SearchForm: React.FunctionComponent<SearchFormProps> = ({ onSubmit, hasResults }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState({
     artist: true,
@@ -36,30 +37,29 @@ const SearchForm: React.FunctionComponent<SearchFormProps> = ({ onSubmit }) => {
   };
 
   const onCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFilters({ ...filters, [e.target.name]: e.target.checked });
-    if (searchTerm) {
-      onSubmit({ searchTerm, filters });
+    const newFilters = { ...filters, [e.target.name]: e.target.checked };
+    setFilters(newFilters);
+    if (searchTerm && hasResults) {
+      onSubmit({ searchTerm, filters: newFilters });
     }
   };
 
   return (
     <form onSubmit={onSubmitHandler}>
-      <TextField
-        type="text"
-        placeholder="Search"
-        label="Search"
-        size="small"
-        variant="outlined"
-        value={searchTerm}
-        onChange={onTextInputChange}
-      />
-      <Button
-        type="submit"
-        variant="contained"
-        color="primary"
-        size="large"
-        startIcon={<SearchIcon />}
-      />
+      <StyledFormGroup row>
+        <TextField
+          type="text"
+          placeholder="Search"
+          label="Search term"
+          size="small"
+          variant="outlined"
+          value={searchTerm}
+          onChange={onTextInputChange}
+        />
+        <IconButton aria-label="search" type="submit">
+          <SearchIcon />
+        </IconButton>
+      </StyledFormGroup>
       <StyledFormGroup row>
         <FormControlLabel
           control={

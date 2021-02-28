@@ -1,13 +1,19 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
 import SearchForm from "./SearchForm";
-import { act } from "react-dom/test-utils";
 
 describe("SearchForm component", () => {
+  const initialFilters = {
+    artist: true,
+    track: true,
+    collection: true
+  };
+
   const onSubmit = jest.fn();
 
   const props = {
-    onSubmit
+    onSubmit,
+    hasResults: false
   };
 
   test("renders correctly", () => {
@@ -29,10 +35,57 @@ describe("SearchForm component", () => {
     render(<SearchForm {...props} />);
     const input = screen.getByPlaceholderText("Search");
     const button = screen.getByRole("button");
-    act(() => {
-      fireEvent.change(input, { target: { value: "Beyonce" } });
-    });
+
+    fireEvent.change(input, { target: { value: "Beyonce" } });
     fireEvent.click(button);
-    expect(onSubmit).toHaveBeenCalledWith("Beyonce");
+
+    expect(onSubmit).toHaveBeenCalledWith({
+      searchTerm: "Beyonce",
+      filters: initialFilters
+    });
+  });
+
+  test("it calls onSubmit on button click with the correct filters", () => {
+    render(<SearchForm {...props} />);
+    const input = screen.getByPlaceholderText("Search");
+    const artistCheckbox = screen.getByText("Artists");
+    const albumCheckbox = screen.getByText("Albums");
+    const button = screen.getByRole("button");
+
+    fireEvent.change(input, { target: { value: "Beyonce" } });
+    fireEvent.click(artistCheckbox);
+    fireEvent.click(albumCheckbox);
+    fireEvent.click(button);
+
+    expect(onSubmit).toHaveBeenCalledWith({
+      searchTerm: "Beyonce",
+      filters: {
+        artist: false,
+        collection: false,
+        track: true
+      }
+    });
+  });
+
+  test("it calls onSubmit on checkbox change if there are results", () => {
+    const newProps = {
+      ...props,
+      hasResults: true
+    };
+    render(<SearchForm {...newProps} />);
+    const input = screen.getByPlaceholderText("Search");
+    const albumCheckbox = screen.getByText("Albums");
+
+    fireEvent.change(input, { target: { value: "Beyonce" } });
+    fireEvent.click(albumCheckbox);
+
+    expect(onSubmit).toHaveBeenCalledWith({
+      searchTerm: "Beyonce",
+      filters: {
+        artist: true,
+        collection: false,
+        track: true
+      }
+    });
   });
 });

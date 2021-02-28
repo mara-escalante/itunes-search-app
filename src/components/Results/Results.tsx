@@ -1,78 +1,59 @@
 import React from "react";
+import styled from "styled-components";
 import List from "@material-ui/core/List";
-import LibraryMusicIcon from "@material-ui/icons/LibraryMusic";
-import FaceIcon from "@material-ui/icons/Face";
-import { Result, Track, Artist, Collection } from "../../types";
-import { useAppSelector, useAppDispatch } from "../../hooks";
-import { fetchResults } from "../../appSlice";
-import InifiniteScroll from "../InifiniteScroll/InifiniteScroll";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import InfiniteScroll from "../InfiniteScroll/InfiniteScroll";
 import ResultItem from "./ResultItem";
+import { Result } from "../../types";
+import { getMappedResult } from "./utils";
+
+const MessageContainer = styled("div")`
+  min-height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 
 interface ResultsProps {
   data: Result[];
+  searchTerm: string;
+  status: string;
+  loadResults: () => void;
 }
 
-const mapTrack = ({ trackId, trackName, artistName, artworkUrl60 }: Track) => ({
-  id: trackId,
-  icon: <LibraryMusicIcon fontSize="large" />,
-  text: `${trackName} - ${artistName}`,
-  imageUrl: artworkUrl60
-});
-
-const mapArtist = ({ artistId, artistName }: Artist) => ({
-  id: artistId,
-  icon: <FaceIcon fontSize="large" />,
-  text: `${artistName}`
-});
-
-const mapCollection = ({
-  collectionId,
-  collectionName,
-  artworkUrl60
-}: Collection) => ({
-  id: collectionId,
-  icon: <LibraryMusicIcon fontSize="large" />,
-  text: `${collectionName}`,
-  imageUrl: artworkUrl60
-});
-
-const mapResult = (result: Result) => {
-  switch (result.wrapperType) {
-    case "track":
-      return mapTrack(result as Track);
-    case "artist":
-      return mapArtist(result as Artist);
-    case "collection":
-      return mapCollection(result as Collection);
-  }
-};
-
-const Results: React.FunctionComponent<ResultsProps> = ({ data }) => {
-  const dispatch = useAppDispatch();
-  const searchTerm = useAppSelector(state => state.app.searchTerm);
-  const filters = useAppSelector(state => state.app.filters);
-  const searchStatus = useAppSelector(state => state.app.status);
-  const isLoading = searchStatus === "loading";
-
-  const getSearchResults = () => {
-    dispatch(fetchResults({ searchTerm, filters }));
-  };
+const Results: React.FunctionComponent<ResultsProps> = ({
+  data,
+  searchTerm,
+  status,
+  loadResults
+}) => {
+  const isLoading = status === "loading";
 
   return (
     <>
-      {data.length ? (
-        <InifiniteScroll loadMore={getSearchResults} isLoading={isLoading}>
-          <List style={{ maxHeight: "400px" }}>
-            {data.map(result => {
-              const { id, ...props } = mapResult(result) || {};
-              return <ResultItem key={id} {...props} />;
+      {data?.length ? (
+        <InfiniteScroll
+          loadMore={loadResults}
+          isLoading={isLoading}
+          height={500}
+        >
+          <List role="list">
+            {data.map((result, idx) => {
+              const { id, ...props } = getMappedResult(result) || {};
+              return <ResultItem key={`${id}-${idx}`} {...props} />;
             })}
           </List>
-        </InifiniteScroll>
-      ) : searchTerm ? (
-        <p>No results for the term "{searchTerm}"</p>
+        </InfiniteScroll>
       ) : (
-        <p>Search for a term to see some results</p>
+        <MessageContainer>
+          {isLoading ? (
+            <CircularProgress />
+          ) : searchTerm ? (
+            <p>No results for the term "{searchTerm}"</p>
+          ) : (
+            <p>Type a search term to see some results</p>
+          )}
+        </MessageContainer>
       )}
     </>
   );

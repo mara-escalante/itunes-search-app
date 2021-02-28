@@ -1,14 +1,17 @@
 import React from "react";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
-interface InifiniteScrollProps {
+interface InfiniteScrollProps {
   loadMore: () => void;
   isLoading?: boolean;
+  height?: number;
 }
 
-const InifiniteScroll: React.FunctionComponent<InifiniteScrollProps> = ({
+const InfiniteScroll: React.FunctionComponent<InfiniteScrollProps> = ({
   children,
   loadMore,
-  isLoading
+  isLoading,
+  height,
 }) => {
   const handleScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
     const { scrollTop, clientHeight, scrollHeight } = e.currentTarget;
@@ -22,12 +25,12 @@ const InifiniteScroll: React.FunctionComponent<InifiniteScrollProps> = ({
     <div
       onScroll={handleScroll}
       data-testid="scroll-container"
-      style={{ overflow: "hidden", overflowY: "auto" }}
+      style={{ height, overflow: "hidden", overflowY: "auto" }}
     >
       {children}
-      {isLoading && <p>Loading...</p>}
+      {isLoading &&  <CircularProgress />}
     </div>
   );
 };
 
-export default InifiniteScroll;
+export default InfiniteScroll;

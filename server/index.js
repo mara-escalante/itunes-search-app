@@ -12,9 +12,13 @@ app.get("/", function (req, res) {
 app.get("/search", async (req, res) => {
   const { term, entity, offset } = req.query;
 
-  const response = await axios.get(`
+  try {
+    const response = await axios.get(`
   https://itunes.apple.com/search?term=${term}&offset=${offset}&limit=10&media=music&entity=${entity}`);
-  return res.send(JSON.stringify(response.data.results));
+    return res.send(JSON.stringify(response.data.results));
+  } catch (e) {
+    return res.send({ error: e });
+  }
 });
 
 app.listen(process.env.PORT || 8080);
